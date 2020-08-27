@@ -19,12 +19,18 @@ app.use(express.static(publicDirectoryPath));
 
 // Io relates to the server and sends the message to all connections
 // Socket relates to the current connection and sends the message to the current connection
-// Boradcast sends the message to everybody except the current connection
+// Broadcast sends the message to everybody except the current connection
 io.on("connection", (socket) => {
   console.log("New WebSocket Connection");
 
-  socket.emit("message", generateMessage("Welcome!"));
-  socket.broadcast.emit("message", generateMessage("A new user has joined!"));
+  socket.on("join", ({ username, room }) => {
+    socket.join(room);
+
+    socket.emit("message", generateMessage("Welcome!"));
+    socket.broadcast
+      .to(room)
+      .emit("message", generateMessage(`${username} has joined!`));
+  });
 
   socket.on("sendMessage", (message, callback) => {
     const filter = new Filter();
@@ -33,7 +39,7 @@ io.on("connection", (socket) => {
       return callback("Profanity is not allowed!");
     }
 
-    io.emit("message", generateMessage(message));
+    io.to("Center City").emit("message", generateMessage(message));
     callback();
   });
 
