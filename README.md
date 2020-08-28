@@ -1,3 +1,3 @@
 # node-chat-app
 
-Node chat app deployed to heroku, craeted using also SocketIO, Mustache among others.
+Chat app deployed to heroku, using Node, Express, SocketIO, Mustache among others.
